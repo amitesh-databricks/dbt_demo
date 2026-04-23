@@ -9,14 +9,7 @@ with cte as (
     else 'businessday'
     end as DAY_TYPE,
 
-    case when month(to_timestamp(started_at)) in (10,11,12)
-    then 'winter'
-    when month(to_timestamp(started_at)) in (1,2,3)
-    then 'spring'
-    when month(to_timestamp(started_at)) in (4,5,6)
-    then 'summer'
-    else 'rainy'
-    end as Station_of_year
+    {{get_session('started_at')}} as Station_of_year
 
 
     from
