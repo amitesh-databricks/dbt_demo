@@ -1,83 +1,113 @@
 # models/bronze/_sources.yml
-# Defines the raw Snowflake tables as dbt sources
-
 version: 2
 
 sources:
   - name: bronze
-    database: "{{ env_var('SNOWFLAKE_DATABASE', 'ECOMMERCE_DB') }}"
-    schema: BRONZE
+    database: "{{env_var('SNOWFLAKE_DATABASE', 'dbt_project')}}"
+    schema: dbt_project_schema
     description: "Raw ingested tables from CSV source files"
 
     tables:
-
-      - name: raw_orders
+      - name: orders
         description: "Raw order transactions from the e-commerce platform"
         columns:
           - name: order_id
             description: "Unique order identifier"
-            tests: [unique, not_null]
+            data_tests:
+              - unique
+              - not_null
           - name: customer_id
-            tests: [not_null]
+            data_tests:
+              - not_null
           - name: product_id
-            tests: [not_null]
+            data_tests:
+              - not_null
           - name: status
-            tests:
+            data_tests:
               - accepted_values:
-                  values: ['completed', 'cancelled', 'refunded', 'pending']
+                  values: 
+                    - "placed"
+                    - "shipped"
+                    - "completed"
           - name: discount_pct
-            tests:
+            data_tests:
               - not_null
               - dbt_utils.accepted_range:
                   min_value: 0
                   max_value: 50
           - name: currency
-            tests:
+            data_tests:
               - accepted_values:
-                  values: ['USD', 'EUR', 'GBP', 'INR']
+                  values: 
+                    - "USD"
+                    - "EUR"
+                    - "GBP"
+                    - "INR"
 
-      - name: raw_customers
+      - name: customers
         description: "Customer master data"
         columns:
           - name: customer_id
-            tests: [unique, not_null]
+            data_tests:
+              - unique
+              - not_null
           - name: email
-            tests: [unique, not_null]
+            data_tests:
+              - unique
+              - not_null
           - name: customer_segment
-            tests:
+            data_tests:
               - accepted_values:
-                  values: ['premium', 'standard', 'basic']
+                  values: 
+                    - "premium"
+                    - "standard"
+                    - "basic"
           - name: is_active
-            tests: [not_null]
+            data_tests:
+              - not_null
 
-      - name: raw_products
+      - name: products
         description: "Product catalog"
         columns:
           - name: product_id
-            tests: [unique, not_null]
+            data_tests:
+              - unique
+              - not_null
           - name: list_price
-            tests:
+            data_tests:
               - not_null
               - dbt_utils.accepted_range:
                   min_value: 0
           - name: cost_price
-            tests:
+            data_tests:
               - not_null
               - dbt_utils.accepted_range:
                   min_value: 0
 
-      - name: raw_payments
+      - name: payment
         description: "Payment transactions"
         columns:
           - name: payment_id
-            tests: [unique, not_null]
+            data_tests:
+              - unique
+              - not_null
           - name: order_id
-            tests: [not_null]
+            data_tests:
+              - not_null
           - name: status
-            tests:
+            data_tests:
               - accepted_values:
-                  values: ['success', 'refunded', 'pending', 'failed']
+                  values: 
+                    - "success"
+                    - "refunded"
+                    - "pending"
+                    - "failed"
           - name: payment_method
-            tests:
+            data_tests:
               - accepted_values:
-                  values: ['credit_card', 'debit_card', 'paypal', 'upi', 'bank_transfer']
+                  values:
+                    - "credit_card"
+                    - "debit_card"
+                    - "paypal"
+                    - "upi"
+                    - "bank_transfer"

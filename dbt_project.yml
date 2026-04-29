@@ -1,8 +1,8 @@
-name: 'ecommerce_dbt'
+name: 'dbt_project'
 version: '1.0.0'
 config-version: 2
 
-profile: 'ecommerce_dbt'
+profile: 'deb_project'
 
 model-paths: ["models"]
 analysis-paths: ["analyses"]
@@ -18,7 +18,7 @@ clean-targets:
 
 # ── Model configurations by layer ─────────────────────────────────────────────
 models:
-  ecommerce_dbt:
+  dbt_project:
 
     bronze:
       +schema: BRONZE
@@ -60,9 +60,3 @@ vars:
   # Data quality thresholds
   max_discount_pct: 50
   min_order_value: 0
-
-models:
-  ecommerce_dbt:
-    # Applies to all files under models/example/
-    example:
-      +materialized: table
