@@ -1,9 +1,83 @@
+# models/bronze/_sources.yml
+# Defines the raw Snowflake tables as dbt sources
+
 version: 2
 
 sources:
-  - name: demo
-    database: demo
-    schema: demo_schema
+  - name: bronze
+    database: "{{ env_var('SNOWFLAKE_DATABASE', 'ECOMMERCE_DB') }}"
+    schema: BRONZE
+    description: "Raw ingested tables from CSV source files"
+
     tables:
-      - name: bike
-      - name: weather
+
+      - name: raw_orders
+        description: "Raw order transactions from the e-commerce platform"
+        columns:
+          - name: order_id
+            description: "Unique order identifier"
+            tests: [unique, not_null]
+          - name: customer_id
+            tests: [not_null]
+          - name: product_id
+            tests: [not_null]
+          - name: status
+            tests:
+              - accepted_values:
+                  values: ['completed', 'cancelled', 'refunded', 'pending']
+          - name: discount_pct
+            tests:
+              - not_null
+              - dbt_utils.accepted_range:
+                  min_value: 0
+                  max_value: 50
+          - name: currency
+            tests:
+              - accepted_values:
+                  values: ['USD', 'EUR', 'GBP', 'INR']
+
+      - name: raw_customers
+        description: "Customer master data"
+        columns:
+          - name: customer_id
+            tests: [unique, not_null]
+          - name: email
+            tests: [unique, not_null]
+          - name: customer_segment
+            tests:
+              - accepted_values:
+                  values: ['premium', 'standard', 'basic']
+          - name: is_active
+            tests: [not_null]
+
+      - name: raw_products
+        description: "Product catalog"
+        columns:
+          - name: product_id
+            tests: [unique, not_null]
+          - name: list_price
+            tests:
+              - not_null
+              - dbt_utils.accepted_range:
+                  min_value: 0
+          - name: cost_price
+            tests:
+              - not_null
+              - dbt_utils.accepted_range:
+                  min_value: 0
+
+      - name: raw_payments
+        description: "Payment transactions"
+        columns:
+          - name: payment_id
+            tests: [unique, not_null]
+          - name: order_id
+            tests: [not_null]
+          - name: status
+            tests:
+              - accepted_values:
+                  values: ['success', 'refunded', 'pending', 'failed']
+          - name: payment_method
+            tests:
+              - accepted_values:
+                  values: ['credit_card', 'debit_card', 'paypal', 'upi', 'bank_transfer']
