@@ -3,7 +3,7 @@ version: 2
 
 sources:
   - name: bronze
-    database: "{{env_var('SNOWFLAKE_DATABASE', 'dbt_project')}}"
+    database: "{{ env_var('SNOWFLAKE_DATABASE', 'dbt_project') }}"
     schema: dbt_project_schema
     description: "Raw ingested tables from CSV source files"
 
@@ -25,24 +25,20 @@ sources:
           - name: status
             data_tests:
               - accepted_values:
-                  values: 
-                    - "placed"
-                    - "shipped"
-                    - "completed"
+                  arguments:
+                    values: ["placed", "shipped", "completed"]
           - name: discount_pct
             data_tests:
               - not_null
               - dbt_utils.accepted_range:
-                  min_value: 0
-                  max_value: 50
+                  arguments:
+                    min_value: 0
+                    max_value: 50
           - name: currency
             data_tests:
               - accepted_values:
-                  values: 
-                    - "USD"
-                    - "EUR"
-                    - "GBP"
-                    - "INR"
+                  arguments:
+                    values: ["USD", "EUR", "GBP", "INR"]
 
       - name: customers
         description: "Customer master data"
@@ -58,10 +54,8 @@ sources:
           - name: customer_segment
             data_tests:
               - accepted_values:
-                  values: 
-                    - "premium"
-                    - "standard"
-                    - "basic"
+                  arguments:
+                    values: ["premium", "standard", "basic"]
           - name: is_active
             data_tests:
               - not_null
@@ -77,12 +71,14 @@ sources:
             data_tests:
               - not_null
               - dbt_utils.accepted_range:
-                  min_value: 0
+                  arguments:
+                    min_value: 0
           - name: cost_price
             data_tests:
               - not_null
               - dbt_utils.accepted_range:
-                  min_value: 0
+                  arguments:
+                    min_value: 0
 
       - name: payment
         description: "Payment transactions"
@@ -97,17 +93,10 @@ sources:
           - name: status
             data_tests:
               - accepted_values:
-                  values: 
-                    - "success"
-                    - "refunded"
-                    - "pending"
-                    - "failed"
+                  arguments:
+                    values: ["success", "refunded", "pending", "failed"]
           - name: payment_method
             data_tests:
               - accepted_values:
-                  values:
-                    - "credit_card"
-                    - "debit_card"
-                    - "paypal"
-                    - "upi"
-                    - "bank_transfer"
+                  arguments:
+                    values: ["credit_card", "debit_card", "paypal", "upi", "bank_transfer"]

@@ -1,20 +1,3 @@
--- WITH joined AS (
---     SELECT 
---         o.order_id,
---         c.name as customer_name,
---         p.amount_usd,
---         o.order_date
---     FROM {{ ref('orders') }} o
---     JOIN {{ ref('customers') }} c ON o.customer_id = c.customer_id
---     JOIN {{ ref('payment') }} p ON o.order_id = p.order_id
---     WHERE o.status = 'COMPLETED' -- Filter
--- )
--- SELECT 
---     *,
---     RANK() OVER (PARTITION BY customer_name ORDER BY order_date DESC) as order_rank
--- FROM joined
-
-
 {{ config(
     materialized='view',
     schema='silver'
@@ -26,10 +9,10 @@ WITH joined AS (
         c.name AS customer_name,
         p.amount_usd,
         o.order_date
-    FROM {{ ref('_stg_orders') }} AS o
+    FROM {{ ref('_stg_order') }} AS o
     INNER JOIN {{ ref('_stg_customers') }} AS c 
         ON o.customer_id = c.customer_id
-    INNER JOIN {{ ref('_stg_payment') }} AS p 
+    INNER JOIN {{ ref('_stg_payments') }} AS p 
         ON o.order_id = p.order_id
     WHERE o.status = 'COMPLETED'
 )
