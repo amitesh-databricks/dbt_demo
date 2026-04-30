@@ -1,13 +1,11 @@
-{{ config(
-    materialized='view',
-    schema='silver'
-) }}
+{{ config(materialized='view', schema='silver') }}
 
 WITH joined AS (
     SELECT 
         o.order_id,
-        c.name AS customer_name,
-        p.amount_usd,
+        -- Concatenating the names passed from _stg_customers
+        c.first_name || ' ' || c.last_name AS customer_name,
+        p.amount_usd, 
         o.order_date
     FROM {{ ref('_stg_order') }} AS o
     INNER JOIN {{ ref('_stg_customers') }} AS c 
@@ -22,7 +20,6 @@ SELECT
     customer_name,
     amount_usd,
     order_date,
-    -- Rank ensures the most recent order for each customer is #1
     RANK() OVER (
         PARTITION BY customer_name 
         ORDER BY order_date DESC, order_id DESC
