@@ -1,4 +1,4 @@
-{{ config(materialized='view') }}
+{{ config(materialized='incremental', unique_key='customer_id') }}
 
 SELECT
     customer_id,
@@ -8,9 +8,10 @@ SELECT
     city,
     country,
     customer_segment,
-    is_active
+    is_active,
+    signup_date
 FROM {{ source('bronze', 'customers') }}
 
--- {% if is_incremental() %}
---  WHERE ingestion_timestamp > (SELECT MAX(ingestion_timestamp) FROM {{ this }})
--- {% endif %}
+{% if is_incremental() %}
+    WHERE signup_date > (SELECT MAX(signup_date) FROM {{ this }})
+{% endif %}

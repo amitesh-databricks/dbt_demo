@@ -12,6 +12,8 @@ WITH joined AS (
         ON o.customer_id = c.customer_id
     INNER JOIN {{ ref('_stg_payments') }} AS p 
         ON o.order_id = p.order_id
+    inner join {{ ref('_stg_products') }} AS pr
+        on o.product_id=pr.product_id
     WHERE o.status = 'COMPLETED'
 )
 
