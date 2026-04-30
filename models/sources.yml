@@ -1,9 +1,102 @@
+# models/bronze/_sources.yml
 version: 2
 
 sources:
-  - name: demo
-    database: demo
-    schema: demo_schema
+  - name: bronze
+    database: "{{ env_var('SNOWFLAKE_DATABASE', 'dbt_project') }}"
+    schema: dbt_project_schema
+    description: "Raw ingested tables from CSV source files"
+
     tables:
-      - name: bike
-      - name: weather
+      - name: orders
+        description: "Raw order transactions from the e-commerce platform"
+        columns:
+          - name: order_id
+            description: "Unique order identifier"
+            data_tests:
+              - unique
+              - not_null
+          - name: customer_id
+            data_tests:
+              - not_null
+          - name: product_id
+            data_tests:
+              - not_null
+          - name: status
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: ["placed", "shipped", "completed"]
+          - name: discount_pct
+            data_tests:
+              - not_null
+              - dbt_utils.accepted_range:
+                  arguments:
+                    min_value: 0
+                    max_value: 50
+          - name: currency
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: ["USD", "EUR", "GBP", "INR"]
+
+      - name: customers
+        description: "Customer master data"
+        columns:
+          - name: customer_id
+            data_tests:
+              - unique
+              - not_null
+          - name: email
+            data_tests:
+              - unique
+              - not_null
+          - name: customer_segment
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: ["premium", "standard", "basic"]
+          - name: is_active
+            data_tests:
+              - not_null
+
+      - name: products
+        description: "Product catalog"
+        columns:
+          - name: product_id
+            data_tests:
+              - unique
+              - not_null
+          - name: list_price
+            data_tests:
+              - not_null
+              - dbt_utils.accepted_range:
+                  arguments:
+                    min_value: 0
+          - name: cost_price
+            data_tests:
+              - not_null
+              - dbt_utils.accepted_range:
+                  arguments:
+                    min_value: 0
+
+      - name: payment
+        description: "Payment transactions"
+        columns:
+          - name: payment_id
+            data_tests:
+              - unique
+              - not_null
+          - name: order_id
+            data_tests:
+              - not_null
+          - name: status
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: ["success", "refunded", "pending", "failed"]
+          - name: payment_method
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: ["credit_card", "debit_card", "paypal", "upi", "bank_transfer"]
