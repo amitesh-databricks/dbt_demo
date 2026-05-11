@@ -1,4 +1,4 @@
-{{ config(materialized='incremental', unique_key='customer_id', alias='stg_customers') }}
+{{ config(materialized='incremental', unique_key='customer_id') }}
 
 SELECT
     customer_id,

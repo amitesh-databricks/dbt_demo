@@ -1,7 +1,6 @@
 {{ config(
     materialized='incremental', 
-    unique_key='product_id',
-    alias='stg_products'
+    unique_key='product_id'
 ) }}
 
 -- The 'if' block here ensures we don't even try to query the 
