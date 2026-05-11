@@ -1,7 +1,6 @@
 {{ config(
     materialized='incremental', 
-    unique_key='payment_id',
-    alias='stg_payments'
+    unique_key='payment_id'
 ) }}
 
 -- The 'if' block here ensures we don't even try to query the 
