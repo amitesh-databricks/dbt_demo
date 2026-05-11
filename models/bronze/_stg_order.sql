@@ -11,6 +11,6 @@ SELECT
     currency::STRING as currency
 FROM {{ source('bronze', 'orders') }}
 
--- {% if is_incremental() %}
---  WHERE orders.order_date > (SELECT MAX(orders.order_date) FROM {{ this }})
--- {% endif %}
+{% if is_incremental() %}
+    WHERE order_date > (SELECT MAX(order_date) FROM {{ this }})
+{% endif %}
