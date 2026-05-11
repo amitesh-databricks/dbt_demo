@@ -21,8 +21,13 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+<<<<<<< HEAD
       # Step 1: Sync Dev to Staging
       - name: Sync dev_branch to main
+=======
+      # Step 1: Sync dev_branch to main
+      - name: Sync Dev to Staging
+>>>>>>> 20c09dec6b427deac90bd87d40fac29895722907
         run: |
           git checkout dev_branch
           git merge origin/dev_branch --ff-only || git merge origin/dev_branch --no-edit
@@ -31,8 +36,12 @@ jobs:
         run: |
           echo "Running automated validation..."
           # npm test or pytest
+<<<<<<< HEAD
       # Step 2: Sync Staging to Production
       - name: Sync main to PROD
+=======
+      # Step 2: Sync main to PROD
+      - name: Sync main to Production
         run: |
           git checkout PROD
           git merge origin/main --ff-only || git merge origin/main --no-edit
