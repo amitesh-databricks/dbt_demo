@@ -22,18 +22,20 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       # Step 1: Sync dev_branch to main
-      - name: Sync Dev to Staging
+      - name: Sync dev_branch to main
         run: |
-          git checkout stg
-          git merge origin/dev --ff-only || git merge origin/dev --no-edit
-          git push origin stg
+          git checkout dev_branch
+          git merge origin/dev_branch --ff-only || git merge origin/dev_branch --no-edit
+          git push origin main
+
       - name: Run Tests
         run: |
           echo "Running automated validation..."
           # npm test or pytest
+          
       # Step 2: Sync main to PROD
-      - name: Sync main to Production
+      - name: Sync main to PROD
         run: |
-          git checkout production
-          git merge origin/stg --ff-only || git merge origin/stg --no-edit
-          git push origin production
+          git checkout PROD
+          git merge origin/main --ff-only || git merge origin/main --no-edit
+          git push origin PROD
