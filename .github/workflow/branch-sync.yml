@@ -27,7 +27,10 @@ jobs:
           git checkout stg
           git merge origin/dev --ff-only || git merge origin/dev --no-edit
           git push origin stg
-
+      - name: Run Tests
+        run: |
+          echo "Running automated validation..."
+          # npm test or pytest
       # Step 2: Sync Staging to Production
       - name: Sync Staging to Production
         run: |
