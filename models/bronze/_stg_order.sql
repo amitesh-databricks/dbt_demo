@@ -1,7 +1,8 @@
-{{ config(materialized='incremental', unique_key='payment_id') }}
+{{ config(materialized='incremental',unique_key='payment_id') }}
 
 SELECT
     payment_id::string as payment_id,
+    product_id:: string as product_id,
     order_id::string as order_id,
     unit_price::DECIMAL(10,2) as amount_eur,
     order_date::Date as order_date,

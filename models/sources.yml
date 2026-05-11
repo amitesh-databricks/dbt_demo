@@ -26,7 +26,7 @@ sources:
             data_tests:
               - accepted_values:
                   arguments:
-                    values: ["placed", "shipped", "completed"]
+                    values: ['pending', 'cancelled', 'completed', 'refunded']
           - name: discount_pct
             data_tests:
               - not_null

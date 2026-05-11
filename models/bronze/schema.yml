@@ -1,0 +1,6 @@
+models:
+  - name: _stg_payments
+    columns:
+      - name: amount_eur
+        tests:
+          - is_positive

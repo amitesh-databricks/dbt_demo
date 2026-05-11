@@ -28,7 +28,7 @@ models:
 
     # 2. Silver Layer: Cleaned and Joined Tables
     silver:
-      +materialized: table
+      +materialized: view
       +tags: ["silver"]
       +on_schema_change: sync_all_columns
 
