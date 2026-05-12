@@ -44,7 +44,12 @@ models:
       fct_daily_sales:
         +materialized: incremental
         +unique_key: ['order_date', 'region']
-
+seeds:
+  dbt_demo:
+    +schema: bronze  # This lands the seed in your bronze schema
+    +column_types:
+      currency_code: varchar(3)
+      is_active: boolean
 # ── Variables ─────────────────────────────────────────────────────────────────
 vars:
   fx_rates:

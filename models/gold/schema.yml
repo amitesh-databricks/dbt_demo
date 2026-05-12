@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: fct_sales_performance
+    description: "Daily sales performance by customer. Primary source for Power BI dashboards."
+    columns:
+      - name: customer_id
+        tests:
+          - not_null
+
+      - name: total_revenue_usd
+        description: "Sum of all completed and pending order amounts"
+        tests:
+          - is_positive # Using your custom macro!
+
+      - name: total_orders
+        description: "Count of unique orders"
+        tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "total_orders > 0"
