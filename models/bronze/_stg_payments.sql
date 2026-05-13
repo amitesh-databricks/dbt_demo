@@ -5,7 +5,8 @@
 ) }}
 
 WITH source_data AS (
-    SELECT
+    -- Use DISTINCT here to ensure we don't ingest the same payment twice from Bronze
+    SELECT DISTINCT
         payment_id::string as payment_id,
         order_id::string as order_id,
         payment_date::date as payment_date,
@@ -16,13 +17,14 @@ WITH source_data AS (
     FROM {{ source('bronze', 'payment') }}
 
     {% if is_incremental() %}
-        -- Only pull records newer than the max date already in this table
         WHERE payment_date > (SELECT MAX(payment_date) FROM {{ this }})
     {% endif %}
 ),
 
 currency_map AS (
-    SELECT * FROM {{ ref('manual_currency_map') }}
+    -- Ensure we only get one name per code to prevent join fan-out
+    SELECT DISTINCT currency_code, currency_name 
+    FROM {{ ref('manual_currency_map') }}
 )
 
 SELECT
@@ -32,7 +34,6 @@ SELECT
     s.amount_eur,
     s.amount_usd,
     s.currency,
-    -- Bringing in the full name from our seed file
     c.currency_name,
     s.status
 FROM source_data s

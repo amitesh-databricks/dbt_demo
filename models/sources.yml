@@ -100,3 +100,15 @@ sources:
               - accepted_values:
                   arguments:
                     values: ["credit_card", "debit_card", "paypal", "upi", "bank_transfer"]
+# unit_tests:
+#   - name: test_is_finalized_logic
+#     model: int_orders
+#     given:
+#       - input: ref('_stg_order')
+#         rows:
+#           - {order_id: 1, status: 'completed'}
+#           - {order_id: 2, status: 'refunded'}
+#     expect:
+#       rows:
+#         - {order_id: 1, is_finalized: true}
+#         - {order_id: 2, is_finalized: false}

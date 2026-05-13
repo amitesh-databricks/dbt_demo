@@ -1,6 +1,14 @@
 {{ config(materialized='view', schema='silver') }}
 
-WITH joined AS (
+WITH payments_summed AS (
+    SELECT 
+        order_id,
+        SUM(amount_usd) AS total_amount_usd
+    FROM {{ ref('_stg_payments') }}
+    GROUP BY 1
+),
+
+joined AS (
     SELECT 
         o.order_id,
         -- Concatenating the names passed from _stg_customers

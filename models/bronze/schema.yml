@@ -4,3 +4,26 @@ models:
       - name: amount_eur
         tests:
           - is_positive
+  - name: _int_order_details
+    columns:
+      - name: status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['pending', 'refunded', 'completed', 'cancelled']
+                severity: warn  # Won't stop the build, but will alert you
+
+      - name: customer_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('_stg_customers')
+                field: customer_id
+  - name: _stg_order
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "amount_eur >= 0"
+      - dbt_utils.at_least_one:
+          arguments:
+            column_name: order_id
