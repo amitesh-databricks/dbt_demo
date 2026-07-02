@@ -1,0 +1,26 @@
+version: 2
+
+models:
+  - name: int_orders
+    description: "Cleaned and joined order data for the Silver layer"
+    columns:
+      - name: order_id
+        description: "Primary key for orders"
+        tests:
+          - unique
+          - not_null
+
+      - name: customer_id
+        description: "Foreign key to customers"
+        tests:
+          - relationships:
+              arguments:
+                to: "{{ ref('_stg_customers') }}"
+                field: customer_id
+
+      - name: status
+        description: "Current status of the order"
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['pending', 'refunded', 'completed', 'cancelled']

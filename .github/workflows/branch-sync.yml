@@ -1,0 +1,41 @@
+name: Scheduled Branch Synchronization
+
+on:
+  schedule:
+    # Runs every 5 minutes
+    - cron: '*/5 * * * *'
+  workflow_dispatch: # Allows you to run it manually for testing
+
+jobs:
+  sync-branches:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetches all history for all branches
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      # Step 1: Sync dev_branch to main
+      - name: Sync dev_branch to main
+        run: |
+          git checkout dev_branch
+          git merge origin/dev_branch --ff-only || git merge origin/dev_branch --no-edit
+          git push origin main
+
+      - name: Run Tests
+        run: |
+          echo "Running automated validation..."
+          # npm test or pytest
+
+      # Step 2: Sync main to PROD
+      - name: Sync main to PROD
+        run: |
+          git checkout PROD
+          git merge origin/main --ff-only || git merge origin/main --no-edit
+          git push origin PROD
